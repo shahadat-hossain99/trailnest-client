@@ -12,6 +12,7 @@
     "@better-auth/mongo-adapter": "^1.6.23",
     "@types/leaflet": "^1.9.21",
     "better-auth": "^1.6.23",
+    "date-fns": "^4.4.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.24.0",
     "mongodb": "^7.5.0",

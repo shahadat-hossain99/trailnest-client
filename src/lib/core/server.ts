@@ -40,9 +40,38 @@ const handleStatusCode = (
   throw new Error(errorMessage);
 };
 
-export const serverFetch = async <T = unknown>(path: string): Promise<T> => {
+// Updated serverFetch with query params support
+export const serverFetch = async <T = unknown>(
+  path: string,
+  params?: Record<string, string | number | boolean>,
+): Promise<T> => {
   try {
-    const res = await fetch(`${baseURL}${path}`);
+    // Build URL with query parameters
+    let url = `${baseURL}${path}`;
+
+    if (params) {
+      const queryParams = new URLSearchParams();
+
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          queryParams.append(key, String(value));
+        }
+      });
+
+      const queryString = queryParams.toString();
+      if (queryString) {
+        url += `?${queryString}`;
+      }
+    }
+
+    console.log(`🔍 Fetching: ${url}`);
+
+    const res = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(await authHeader()),
+      },
+    });
 
     if (!res.ok) {
       let errorData: Record<string, unknown>;
