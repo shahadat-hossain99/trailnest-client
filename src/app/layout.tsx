@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Shared/Navbar/Navbar";
 import Footer from "@/components/Shared/Footer/Footer";
 import { getUserSession } from "@/lib/core/session";
+import { Toaster } from "sonner";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -39,6 +40,18 @@ export default async function RootLayout({
 
         <main> {children}</main>
         <Footer />
+        <Toaster
+          position="bottom-right"
+          richColors
+          closeButton
+          toastOptions={{
+            style: {
+              background: "white",
+              border: "1px solid #e5e7eb",
+            },
+            className: "rounded-xl shadow-lg",
+          }}
+        />
       </body>
     </html>
   );

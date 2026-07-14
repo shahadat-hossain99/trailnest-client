@@ -30,7 +30,7 @@ const Navbar = ({ user }: NavbarProps) => {
       href: "/",
     },
     {
-      name: "Explore Listings",
+      name: "Explore",
       href: "/explore",
     },
   ];
