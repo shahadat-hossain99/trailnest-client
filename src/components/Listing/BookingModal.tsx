@@ -1,19 +1,34 @@
 // components/Listing/BookingModal.tsx
 "use client";
 
-import { useState } from "react";
-import { X, Calendar, Users, DollarSign, AlertCircle } from "lucide-react";
-import { format } from "date-fns";
+import { useState, useEffect } from "react";
+import {
+  X,
+  Calendar,
+  Users,
+  DollarSign,
+  AlertCircle,
+  Info,
+  Shield,
+} from "lucide-react";
+import { format, differenceInDays, isAfter, isBefore, isEqual } from "date-fns";
 import { toast } from "sonner";
 import Button from "@/components/Ui/Button";
 import Input from "@/components/Ui/Input";
-import { serverMutation } from "@/lib/core/server";
+import { serverMutation, serverFetch } from "@/lib/core/server";
 
 interface BookingModalProps {
   listingId: string;
   pricePerDay: number;
   onClose: () => void;
   onSuccess: () => void;
+}
+
+interface Booking {
+  _id: string;
+  startDate: string;
+  endDate: string;
+  status: string;
 }
 
 const BookingModal = ({
@@ -23,46 +38,127 @@ const BookingModal = ({
   onSuccess,
 }: BookingModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState(false);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [guests, setGuests] = useState(1);
+  const [specialNote, setSpecialNote] = useState("");
+  const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
   const [errors, setErrors] = useState({
     startDate: "",
     endDate: "",
     guests: "",
+    conflict: "",
   });
+
+  // Fetch existing bookings for conflict check
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const data = await serverFetch<Booking[]>(
+          `/bookings/listing/${listingId}`,
+        );
+        setExistingBookings(data || []);
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+      }
+    };
+    fetchBookings();
+  }, [listingId]);
 
   const calculateTotal = () => {
     if (!startDate || !endDate) return 0;
     const start = new Date(startDate);
     const end = new Date(endDate);
-    const days = Math.max(
-      1,
-      Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)),
-    );
+    const days = Math.max(1, differenceInDays(end, start));
     return days * pricePerDay;
   };
 
+  const calculateDays = () => {
+    if (!startDate || !endDate) return 0;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return Math.max(1, differenceInDays(end, start));
+  };
+
+  const checkConflict = (start: Date, end: Date): boolean => {
+    // Check against existing confirmed bookings
+    const confirmedBookings = existingBookings.filter(
+      (b) => b.status === "confirmed",
+    );
+
+    for (const booking of confirmedBookings) {
+      const bookingStart = new Date(booking.startDate);
+      const bookingEnd = new Date(booking.endDate);
+
+      // Check if dates overlap
+      const overlaps =
+        (isAfter(start, bookingStart) && isBefore(start, bookingEnd)) ||
+        (isAfter(end, bookingStart) && isBefore(end, bookingEnd)) ||
+        isEqual(start, bookingStart) ||
+        isEqual(end, bookingEnd) ||
+        (isBefore(start, bookingStart) && isAfter(end, bookingEnd));
+
+      if (overlaps) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const validateForm = () => {
-    const newErrors = { startDate: "", endDate: "", guests: "" };
+    const newErrors = { startDate: "", endDate: "", guests: "", conflict: "" };
     let isValid = true;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     if (!startDate) {
       newErrors.startDate = "Start date is required";
       isValid = false;
+    } else {
+      const start = new Date(startDate);
+      if (isBefore(start, today)) {
+        newErrors.startDate = "Start date must be today or a future date";
+        isValid = false;
+      }
     }
 
     if (!endDate) {
       newErrors.endDate = "End date is required";
       isValid = false;
-    } else if (startDate && new Date(endDate) <= new Date(startDate)) {
-      newErrors.endDate = "End date must be after start date";
-      isValid = false;
+    } else if (startDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      if (!isAfter(end, start)) {
+        newErrors.endDate = "End date must be after start date";
+        isValid = false;
+      }
+
+      // Check minimum booking is 1 day
+      const days = differenceInDays(end, start);
+      if (days < 1) {
+        newErrors.endDate = "Minimum booking is 1 day";
+        isValid = false;
+      }
     }
 
     if (guests < 1) {
       newErrors.guests = "At least 1 guest required";
       isValid = false;
+    }
+
+    // Check for conflicts
+    if (startDate && endDate && isValid) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      if (checkConflict(start, end)) {
+        newErrors.conflict =
+          "These dates are already booked. Please select different dates.";
+        isValid = false;
+      }
     }
 
     setErrors(newErrors);
@@ -85,24 +181,61 @@ const BookingModal = ({
         endDate,
         guests,
         totalPrice: calculateTotal(),
+        specialNote: specialNote.trim() || undefined,
       };
 
       await serverMutation("/bookings", bookingData, "POST");
 
-      toast.success("🎉 Booking confirmed!", {
+      toast.success("🎉 Listing booked successfully!", {
         description: `Your booking from ${format(new Date(startDate), "MMM d, yyyy")} to ${format(new Date(endDate), "MMM d, yyyy")} has been confirmed.`,
+        duration: 5000,
       });
 
       onSuccess();
       onClose();
     } catch (error) {
+      console.error("Booking error:", error);
+
+      let errorMessage = "Please try again later.";
+      if (error instanceof Error) {
+        if (error.message.includes("conflict")) {
+          errorMessage =
+            "These dates are already booked. Please select different dates.";
+          setErrors((prev) => ({ ...prev, conflict: errorMessage }));
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
       toast.error("Failed to book", {
-        description: "Please try again later.",
+        description: errorMessage,
+        duration: 4000,
       });
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Re-validate on date changes
+  useEffect(() => {
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      if (isAfter(end, start) && differenceInDays(end, start) >= 1) {
+        const hasConflict = checkConflict(start, end);
+        if (hasConflict) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
+          setErrors((prev) => ({
+            ...prev,
+            conflict:
+              "These dates are already booked. Please select different dates.",
+          }));
+        } else {
+          setErrors((prev) => ({ ...prev, conflict: "" }));
+        }
+      }
+    }
+  }, [startDate, endDate, existingBookings]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -113,6 +246,7 @@ const BookingModal = ({
           <button
             onClick={onClose}
             className="rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition"
+            aria-label="Close"
           >
             <X className="h-5 w-5" />
           </button>
@@ -173,6 +307,14 @@ const BookingModal = ({
             )}
           </div>
 
+          {/* Conflict Error */}
+          {errors.conflict && (
+            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600 border border-red-200 flex items-start gap-2">
+              <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+              <span>{errors.conflict}</span>
+            </div>
+          )}
+
           {/* Guests */}
           <div>
             <label className="block text-sm font-medium text-(--dark)">
@@ -201,8 +343,28 @@ const BookingModal = ({
             )}
           </div>
 
+          {/* Special Note */}
+          <div>
+            <label className="block text-sm font-medium text-(--dark)">
+              Special Note{" "}
+              <span className="text-xs text-(--text-secondary)">
+                (optional)
+              </span>
+            </label>
+            <div className="relative mt-1.5">
+              <textarea
+                value={specialNote}
+                onChange={(e) => setSpecialNote(e.target.value)}
+                placeholder="Any special requests or notes for the host..."
+                rows={3}
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 placeholder:text-gray-400"
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
           {/* Total Price */}
-          {startDate && endDate && (
+          {startDate && endDate && !errors.conflict && (
             <div className="rounded-xl bg-(--primary)/5 p-4 border border-(--primary)/20">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -214,17 +376,17 @@ const BookingModal = ({
                 </span>
               </div>
               <p className="mt-1 text-xs text-(--text-secondary)">
-                ${pricePerDay} ×{" "}
-                {Math.max(
-                  1,
-                  Math.ceil(
-                    (new Date(endDate).getTime() -
-                      new Date(startDate).getTime()) /
-                      (1000 * 60 * 60 * 24),
-                  ),
-                )}{" "}
-                days
+                ${pricePerDay} × {calculateDays()} day
+                {calculateDays() > 1 ? "s" : ""}
               </p>
+            </div>
+          )}
+
+          {/* Availability Info */}
+          {startDate && endDate && !errors.conflict && (
+            <div className="flex items-center gap-2 text-xs text-green-600 bg-green-50 p-2 rounded-lg">
+              <Info className="h-4 w-4" />
+              <span>✓ These dates are available!</span>
             </div>
           )}
 
@@ -232,10 +394,15 @@ const BookingModal = ({
             type="submit"
             variant="primary"
             className="w-full py-3"
-            disabled={isLoading}
+            disabled={isLoading || !!errors.conflict}
           >
             {isLoading ? "Booking..." : "Confirm Booking"}
           </Button>
+
+          <p className="text-center text-xs text-(--text-secondary)">
+            <Shield className="inline h-3 w-3 mr-1" />
+            Your payment is secure and your booking is guaranteed.
+          </p>
         </form>
       </div>
     </div>
