@@ -1,6 +1,8 @@
 import Hero from "@/components/Home/Hero";
 import WhyChooseUs from "@/components/Home/WhyChooseUs";
 import Newsletter from "@/components/Home/Newsletter";
+import FeaturedSection from "@/components/Home/FeaturedSection";
+import Testimonials from "@/components/Home/Testimonials";
 
 export default function Home() {
   return (
@@ -25,7 +27,9 @@ export default function Home() {
     // </Container>
     <>
       <Hero />
+      <FeaturedSection />
       <WhyChooseUs />
+      <Testimonials />
       <Newsletter />
     </>
   );

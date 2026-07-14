@@ -4,6 +4,14 @@ import { redirect } from "next/navigation";
 import { getUserToken } from "./session";
 
 const baseURL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
+// Define error response type
+interface ErrorResponse {
+  error?: string;
+  message?: string;
+  data?: {
+    message?: string;
+  };
+}
 
 export const authHeader = async (): Promise<Record<string, string>> => {
   const token = await getUserToken();
@@ -66,29 +74,55 @@ export const serverFetch = async <T = unknown>(
 
     console.log(`🔍 Fetching: ${url}`);
 
-    const res = await fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        ...(await authHeader()),
-      },
-    });
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+    };
 
-    if (!res.ok) {
-      let errorData: Record<string, unknown>;
-      try {
-        errorData = await res.json();
-      } catch {
-        errorData = {};
+    // Only add auth header if it exists
+    try {
+      const auth = await authHeader();
+      if (auth && Object.keys(auth).length > 0) {
+        headers.Authorization = auth.Authorization;
       }
-      throw new Error(
-        (errorData.message as string) ||
-          `Fetch failed with status ${res.status}`,
-      );
+    } catch (authError) {
+      console.warn("Auth header not available:", authError);
     }
 
-    return (await res.json()) as T;
+    const res = await fetch(url, {
+      headers,
+    });
+
+    console.log(`📡 Response Status: ${res.status} for ${url}`);
+
+    if (!res.ok) {
+      let errorMessage = `Fetch failed with status ${res.status}`;
+
+      try {
+        const errorData = (await res.json()) as ErrorResponse;
+        console.error("❌ Error Response:", errorData);
+
+        // Extract error message safely using optional chaining
+        if (errorData.error) {
+          errorMessage = errorData.error;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        } else if (errorData.data?.message) {
+          errorMessage = errorData.data.message;
+        }
+      } catch {
+        // If response is not JSON, use status text
+        errorMessage = res.statusText || errorMessage;
+        console.error("❌ Error Response: Non-JSON response");
+      }
+
+      throw new Error(errorMessage);
+    }
+
+    const data = await res.json();
+    console.log(`✅ Success Response: ${url}`);
+    return data as T;
   } catch (error) {
-    console.error(`Server Fetch error at ${path}:`, error);
+    console.error(`❌ Server Fetch error at ${path}:`, error);
     throw error;
   }
 };
