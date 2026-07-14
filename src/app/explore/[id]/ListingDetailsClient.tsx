@@ -40,11 +40,12 @@ interface ListingDetailsClientProps {
 }
 
 const ListingDetailsClient = ({
-  listing,
+  listing: initialListing,
   user,
   listingId,
 }: ListingDetailsClientProps) => {
   const router = useRouter();
+  const [listing, setListing] = useState<Listing>(initialListing);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -77,6 +78,16 @@ const ListingDetailsClient = ({
   const getFeatureIcon = (featureId: string) => {
     const allFeatures = [...featuresMap.campsite, ...featuresMap.gear];
     return allFeatures.find((f) => f.id === featureId)?.icon || "✅";
+  };
+
+  // Handle successful booking
+  const handleBookingSuccess = () => {
+    setListing((prev) => ({
+      ...prev,
+      bookingCount: (prev.bookingCount || 0) + 1,
+    }));
+    toast.success("🎉 Booking confirmed!");
+    setIsBookingModalOpen(false);
   };
 
   return (
@@ -336,12 +347,11 @@ const ListingDetailsClient = ({
       {/* Modals */}
       {isBookingModalOpen && (
         <BookingModal
-          listingId={listingId}
+          listingId={listing._id}
           pricePerDay={listing.pricePerDay}
+          listingType={listing.type}
           onClose={() => setIsBookingModalOpen(false)}
-          onSuccess={() => {
-            toast.success("🎉 Booking confirmed!");
-          }}
+          onSuccess={handleBookingSuccess}
         />
       )}
 

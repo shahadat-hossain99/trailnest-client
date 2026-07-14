@@ -19,17 +19,19 @@ import {
   Wrench,
   AlertTriangle,
   X,
+  Package,
 } from "lucide-react";
 import { format, isAfter } from "date-fns";
 import { toast } from "sonner";
 import Container from "@/components/Ui/Container";
 import Button from "@/components/Ui/Button";
 import SectionTitle from "@/components/Ui/SectionTitle";
-import { protectedFetch, serverMutation } from "@/lib/core/server";
+import { serverMutation } from "@/lib/core/server";
 
 interface Booking {
   _id: string;
   listingId: string;
+  listingType?: "campsite" | "gear";
   listing?: {
     _id: string;
     name: string;
@@ -41,9 +43,10 @@ interface Booking {
     };
     pricePerDay: number;
   };
-  startDate: string;
-  endDate: string;
-  guests: number;
+  startDate?: string;
+  endDate?: string;
+  guests?: number;
+  quantity?: number;
   totalPrice: number;
   status: "confirmed" | "cancelled" | "pending";
   createdAt: string;
@@ -58,12 +61,14 @@ interface MyBookingsClientProps {
     name?: string;
     image?: string | null;
   };
+  token: string | null;
 }
 
 const MyBookingsClient = ({
   bookings: initialBookings,
   error: initialError,
   user,
+  token,
 }: MyBookingsClientProps) => {
   const router = useRouter();
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
@@ -76,6 +81,20 @@ const MyBookingsClient = ({
     null,
   );
   const [selectedBookingName, setSelectedBookingName] = useState<string>("");
+
+  const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+  // Helper function to safely format dates
+  const formatDateSafe = (date: string | undefined) => {
+    if (!date) return "Invalid date";
+    try {
+      const parsedDate = new Date(date);
+      if (isNaN(parsedDate.getTime())) return "Invalid date";
+      return format(parsedDate, "MMM d, yyyy");
+    } catch {
+      return "Invalid date";
+    }
+  };
 
   const openConfirmModal = (bookingId: string, bookingName: string) => {
     setSelectedBookingId(bookingId);
@@ -96,14 +115,12 @@ const MyBookingsClient = ({
     closeConfirmModal();
 
     try {
-      // Use serverMutation for DELETE request
       await serverMutation(
         `/bookings/${selectedBookingId}`,
         undefined,
         "DELETE",
       );
 
-      // Update local state
       setBookings((prev) =>
         prev.map((booking) =>
           booking._id === selectedBookingId
@@ -157,15 +174,28 @@ const MyBookingsClient = ({
 
   const canCancel = (booking: Booking) => {
     if (booking.status !== "confirmed") return false;
-    const startDate = new Date(booking.startDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return isAfter(startDate, today);
+
+    // For campsites: check if start date is in the future
+    if (booking.listingType === "campsite") {
+      if (!booking.startDate) return false;
+      const startDate = new Date(booking.startDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return isAfter(startDate, today);
+    }
+
+    // For gear: can always cancel (no date restriction)
+    return true;
   };
 
-  const getTotalDays = (startDate: string, endDate: string) => {
+  const getTotalDays = (
+    startDate: string | undefined,
+    endDate: string | undefined,
+  ) => {
+    if (!startDate || !endDate) return 0;
     const start = new Date(startDate);
     const end = new Date(endDate);
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return 0;
     const diffTime = Math.abs(end.getTime() - start.getTime());
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
@@ -299,28 +329,42 @@ const MyBookingsClient = ({
                               {booking.listing?.type || "Unknown"}
                             </span>
                             <span className="flex items-center gap-1">
-                              <Users className="h-3.5 w-3.5" />
-                              {booking.guests} guest
-                              {booking.guests > 1 ? "s" : ""}
+                              {booking.listingType === "campsite" ? (
+                                <>
+                                  <Users className="h-3.5 w-3.5" />
+                                  {booking.guests || 1} guest
+                                  {(booking.guests || 1) > 1 ? "s" : ""}
+                                </>
+                              ) : (
+                                <>
+                                  <Package className="h-3.5 w-3.5" />
+                                  {booking.quantity || 1} unit
+                                  {(booking.quantity || 1) > 1 ? "s" : ""}
+                                </>
+                              )}
                             </span>
                           </div>
                         </div>
 
-                        {/* Dates */}
-                        <div className="mt-2 flex flex-wrap items-center gap-4 text-sm">
-                          <span className="flex items-center gap-1 text-(--text-secondary)">
-                            <Calendar className="h-4 w-4" />
-                            {format(
-                              new Date(booking.startDate),
-                              "MMM d, yyyy",
-                            )}{" "}
-                            - {format(new Date(booking.endDate), "MMM d, yyyy")}
-                          </span>
-                          <span className="text-xs text-(--text-secondary)">
-                            {getTotalDays(booking.startDate, booking.endDate)}{" "}
-                            days
-                          </span>
-                        </div>
+                        {/* Dates - Only for campsites */}
+                        {booking.listingType === "campsite" &&
+                          booking.startDate &&
+                          booking.endDate && (
+                            <div className="mt-2 flex flex-wrap items-center gap-4 text-sm">
+                              <span className="flex items-center gap-1 text-(--text-secondary)">
+                                <Calendar className="h-4 w-4" />
+                                {formatDateSafe(booking.startDate)} -{" "}
+                                {formatDateSafe(booking.endDate)}
+                              </span>
+                              <span className="text-xs text-(--text-secondary)">
+                                {getTotalDays(
+                                  booking.startDate,
+                                  booking.endDate,
+                                )}{" "}
+                                days
+                              </span>
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -332,8 +376,9 @@ const MyBookingsClient = ({
                         </p>
                         <p className="text-xs text-(--text-secondary)">
                           ${booking.listing?.pricePerDay || 0} ×{" "}
-                          {getTotalDays(booking.startDate, booking.endDate)}{" "}
-                          days
+                          {booking.listingType === "campsite"
+                            ? `${getTotalDays(booking.startDate, booking.endDate)} days`
+                            : `${booking.quantity || 1} units`}
                         </p>
                       </div>
 
@@ -341,7 +386,7 @@ const MyBookingsClient = ({
                         {canCancel(booking) && (
                           <Button
                             variant="outline"
-                            className="flex-1 border-red-300 text-red-600 hover:bg-red-500 hover:border-red-400"
+                            className="flex-1 border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
                             onClick={() =>
                               openConfirmModal(
                                 booking._id,
@@ -411,7 +456,6 @@ const MyBookingsClient = ({
       {showConfirmModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl animate-slide-in">
-            {/* Close Button */}
             <button
               onClick={closeConfirmModal}
               className="absolute right-4 top-4 rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition"
@@ -420,12 +464,10 @@ const MyBookingsClient = ({
               <X className="h-5 w-5" />
             </button>
 
-            {/* Icon */}
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
               <AlertTriangle className="h-8 w-8 text-red-600" />
             </div>
 
-            {/* Content */}
             <div className="text-center">
               <h3 className="text-xl font-bold text-(--dark)">
                 Cancel Booking
@@ -443,7 +485,6 @@ const MyBookingsClient = ({
               </p>
             </div>
 
-            {/* Actions */}
             <div className="mt-6 flex gap-3">
               <Button
                 variant="outline"

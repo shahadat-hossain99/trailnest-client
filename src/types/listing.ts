@@ -5,7 +5,7 @@ export interface Listing {
   description: string;
   image: string;
   images?: string[];
-  type: string;
+  type: "campsite" | "gear"; // Use literal type
   location: {
     lat: number;
     lng: number;
