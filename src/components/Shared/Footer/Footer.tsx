@@ -15,6 +15,7 @@ import {
 import Container from "@/components/Ui/Container";
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa6";
 import Logo from "../Navbar/Logo";
+import { BsTwitterX } from "react-icons/bs";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -38,7 +39,7 @@ const Footer = () => {
   const socialLinks = [
     { name: "Facebook", icon: FaFacebook, href: "#" },
     { name: "Instagram", icon: FaInstagram, href: "#" },
-    { name: "Twitter", icon: FaTwitter, href: "#" },
+    { name: "Twitter", icon: BsTwitterX, href: "#" },
     { name: "Youtube", icon: FaYoutube, href: "#" },
   ];
 
