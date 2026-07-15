@@ -48,7 +48,7 @@ const MobileDrawer = ({ isLoggedIn, user }: MobileDrawerProps) => {
   // User account specific settings
   const accountLinks = [
     { name: "Profile", href: "/profile", icon: User },
-    { name: "Settings", href: "/settings", icon: Settings },
+    // { name: "Settings", href: "/settings", icon: Settings },
   ];
 
   const isActiveLink = (href: string) => {

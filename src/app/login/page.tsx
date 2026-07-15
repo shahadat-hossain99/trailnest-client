@@ -1,3 +1,4 @@
+// app/login/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -5,11 +6,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
+import { toast } from "sonner";
 
 import Button from "@/components/Ui/Button";
 import Input from "@/components/Ui/Input";
 import Container from "@/components/Ui/Container";
-import { signIn } from "@/lib/auth-client"; // ✅ Ensure this points to your auth-client path
+import { signIn } from "@/lib/auth-client";
 
 const LoginPage = () => {
   const router = useRouter();
@@ -55,39 +57,50 @@ const LoginPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast.error("Please fix all errors before submitting");
+      return;
+    }
 
     setIsLoading(true);
     setErrors({ email: "", password: "", general: "" });
 
     try {
-      // ✅ Integrated with BetterAuth Email Sign-In
       const result = await signIn.email({
         email: formData.email,
         password: formData.password,
-        // callbackURL: "/", // Where to direct after successful auth
       });
-      setTimeout(() => {
-        router.push("/");
-        router.refresh();
-      }, 1500);
 
       if (result?.error) {
         setErrors((prev) => ({
           ...prev,
           general: result.error.message || "Invalid email or password",
         }));
+        toast.error("Login failed", {
+          description: result.error.message || "Invalid email or password",
+        });
+        setIsLoading(false);
         return;
       }
 
-      router.push("/");
-      router.refresh();
+      toast.success("🎉 Welcome back!", {
+        description: "You have been successfully logged in.",
+        duration: 3000,
+      });
+
+      setTimeout(() => {
+        router.push("/");
+        router.refresh();
+      }, 1000);
     } catch (err) {
       console.error(err);
       setErrors((prev) => ({
         ...prev,
         general: "An unexpected error occurred. Please try again.",
       }));
+      toast.error("Login failed", {
+        description: "An unexpected error occurred. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -98,10 +111,14 @@ const LoginPage = () => {
   //   setErrors({ email: "", password: "", general: "" });
 
   //   try {
-  //     // ✅ Integrated with BetterAuth Google OAuth provider
   //     await signIn.social({
   //       provider: "google",
   //       callbackURL: "/",
+  //     });
+
+  //     toast.success("🎉 Google sign in successful!", {
+  //       description: "You have been successfully logged in.",
+  //       duration: 3000,
   //     });
   //   } catch (err) {
   //     console.error(err);
@@ -109,6 +126,9 @@ const LoginPage = () => {
   //       ...prev,
   //       general: "Google authentication failed. Please try again.",
   //     }));
+  //     toast.error("Google sign in failed", {
+  //       description: "Please try again later.",
+  //     });
   //     setIsLoading(false);
   //   }
   // };
@@ -265,7 +285,7 @@ const LoginPage = () => {
               </div>
             </div>
 
-            {/* Google Button Enabled */}
+            {/* Google Button */}
             <button
               type="button"
               // onClick={handleGoogleSignIn}
@@ -273,7 +293,9 @@ const LoginPage = () => {
               className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-300 px-4 py-3 font-medium text-(--dark) bg-white transition hover:bg-gray-50/80 hover:border-gray-400/80 disabled:opacity-50 disabled:cursor-not-allowed shadow-xs"
             >
               <FcGoogle className="h-5 w-5" />
-              <span>Continue with Google</span>
+              <span>
+                {isLoading ? "Signing in..." : "Continue with Google"}
+              </span>
             </button>
 
             <p className="mt-6 text-center text-sm text-(--text-secondary)">

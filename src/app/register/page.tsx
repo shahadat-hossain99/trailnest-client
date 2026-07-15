@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
+import { toast } from "sonner";
 
 import Container from "@/components/Ui/Container";
 import Button from "@/components/Ui/Button";
@@ -148,6 +149,7 @@ const RegisterPage = () => {
     e.preventDefault();
 
     if (!validateForm()) {
+      toast.error("Please fix all errors before submitting");
       return;
     }
 
@@ -175,21 +177,31 @@ const RegisterPage = () => {
           ...prev,
           general: result.error.message || "Registration failed",
         }));
+        toast.error("Registration failed", {
+          description: result.error.message || "Please try again",
+        });
         return;
       }
 
       setSuccess("Registration successful! Redirecting to login...");
+      toast.success("🎉 Registration successful!", {
+        description: "Please check your email to verify your account.",
+        duration: 5000,
+      });
 
       setTimeout(() => {
         router.push("/login");
         router.refresh();
-      }, 1500);
+      }, 2000);
     } catch (err) {
       console.error(err);
       setErrors((prev) => ({
         ...prev,
         general: "Registration failed. Please try again.",
       }));
+      toast.error("Registration failed", {
+        description: "An unexpected error occurred. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -210,6 +222,7 @@ const RegisterPage = () => {
               </p>
             </div>
 
+            {/* Success Message - Inline */}
             {success && (
               <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700 flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 shrink-0" />
@@ -217,6 +230,7 @@ const RegisterPage = () => {
               </div>
             )}
 
+            {/* General Error - Inline */}
             {errors.general && (
               <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600 flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 shrink-0" />

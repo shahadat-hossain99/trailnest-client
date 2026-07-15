@@ -385,7 +385,7 @@ const MyBookingsClient = ({
                         {canCancel(booking) && (
                           <Button
                             variant="outline"
-                            className="flex-1 border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
+                            className="flex-1 border-red-300 text-red-600 hover:bg-red-500 hover:border-red-400"
                             onClick={() =>
                               openConfirmModal(
                                 booking._id,

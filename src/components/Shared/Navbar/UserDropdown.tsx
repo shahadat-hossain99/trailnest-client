@@ -17,6 +17,7 @@ import {
 
 import { signOut } from "@/lib/auth-client";
 import type { UserSession } from "@/lib/core/session";
+import { toast } from "sonner";
 
 interface UserDropdownProps {
   user: UserSession | null;
@@ -58,13 +59,28 @@ const UserDropdown = ({ user }: UserDropdownProps) => {
   const handleLogout = async () => {
     try {
       setIsOpen(false);
+
+      // Show loading toast
+      const loadingToast = toast.loading("Logging out...");
+
       await signOut({});
+
+      // Dismiss loading and show success
+      toast.dismiss(loadingToast);
+      toast.success("👋 Logged out successfully", {
+        description: "See you next time!",
+        duration: 3000,
+      });
+
       setTimeout(() => {
         router.push("/login");
         router.refresh();
       }, 1000);
     } catch (error) {
       console.error("Sign-out failed:", error);
+      toast.error("Logout failed", {
+        description: "An unexpected error occurred. Please try again.",
+      });
     }
   };
 
@@ -73,7 +89,7 @@ const UserDropdown = ({ user }: UserDropdownProps) => {
     { name: "My Listings", href: "/my-listings", icon: Home },
     { name: "Add Listing", href: "/add-listing", icon: PlusCircle },
     { name: "My Bookings", href: "/my-bookings", icon: Calendar },
-    { name: "Settings", href: "/settings", icon: Settings },
+    // { name: "Settings", href: "/settings", icon: Settings },
   ];
 
   return (
@@ -92,16 +108,35 @@ const UserDropdown = ({ user }: UserDropdownProps) => {
         className="flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-2 transition hover:bg-emerald-50 hover:shadow-md hover:shadow-emerald-700/20"
       >
         <div className="relative h-8 w-8 overflow-hidden rounded-full bg-gray-200">
-          <Image
-            src={
-              user.image ||
-              `https://api.dicebear.com/7.x/initials/svg?seed=${user.name || "User"}`
-            }
-            alt={user.name || "User avatar"}
-            fill
-            sizes="32px"
-            className="object-cover"
-          />
+          {user.image ? (
+            <Image
+              src={user.image}
+              alt={user.name || "User avatar"}
+              fill
+              sizes="32px"
+              className="object-cover"
+              onError={(e) => {
+                // If image fails to load, show initials fallback
+                const target = e.target as HTMLImageElement;
+                target.style.display = "none";
+                // Show initials fallback
+                const parent = target.parentElement;
+                if (parent) {
+                  const fallback = document.createElement("span");
+                  fallback.className =
+                    "flex h-full w-full items-center justify-center text-sm font-medium text-gray-600 bg-gray-200";
+                  fallback.textContent =
+                    user.name?.charAt(0).toUpperCase() || "U";
+                  parent.appendChild(fallback);
+                }
+              }}
+            />
+          ) : (
+            // Initials fallback when no image URL
+            <span className="flex h-full w-full items-center justify-center text-sm font-medium text-gray-600 bg-gray-200">
+              {user.name?.charAt(0).toUpperCase() || "U"}
+            </span>
+          )}
         </div>
         <ChevronDown
           className={`h-4 w-4 transition-transform duration-200 ${
