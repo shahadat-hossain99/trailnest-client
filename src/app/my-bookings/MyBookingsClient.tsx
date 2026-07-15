@@ -8,7 +8,6 @@ import Link from "next/link";
 import {
   Calendar,
   MapPin,
-  DollarSign,
   Users,
   XCircle,
   CheckCircle,
@@ -61,14 +60,14 @@ interface MyBookingsClientProps {
     name?: string;
     image?: string | null;
   };
-  token: string | null;
+  // token: string | null;
 }
 
 const MyBookingsClient = ({
   bookings: initialBookings,
   error: initialError,
-  user,
-  token,
+  // user,
+  // token,
 }: MyBookingsClientProps) => {
   const router = useRouter();
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);

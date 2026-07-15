@@ -80,7 +80,7 @@ const BookingModal = ({
       const start = new Date(startDate);
       const end = new Date(endDate);
       const days = Math.max(1, differenceInDays(end, start));
-      return days * pricePerDay * quantity;
+      return days * pricePerDay;
     } else {
       return pricePerDay * quantity;
     }

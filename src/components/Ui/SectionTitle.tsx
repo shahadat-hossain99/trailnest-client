@@ -2,6 +2,7 @@ interface SectionTitleProps {
   title: string;
   subtitle?: string;
   center?: boolean;
+  className?: string; // Add this
 }
 
 const SectionTitle = ({
