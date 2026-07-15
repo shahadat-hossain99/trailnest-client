@@ -29,7 +29,7 @@ const itemVariants: Variants = {
 
 const Hero = () => {
   return (
-    <section className="relative bg-gradient-to-br from-green-50/70 via-white to-orange-50/60 overflow-hidden min-h-[90vh] flex items-center">
+    <section className="relative bg-linear-to-br from-green-50/70 via-white to-orange-50/60 overflow-hidden min-h-[70vh] flex items-center">
       {/* 1. ANIMATED AMBIENT BACKGROUND BLOBS */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
         <motion.div
