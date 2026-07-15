@@ -55,10 +55,7 @@ It's a two-repo MERN project: this repo is the **Next.js frontend**; the API liv
   - [Frontend (this repo)](#frontend-this-repo)
   - [Backend (trailnest-backend)](#backend-trailnest-backend)
 - [API Reference](#api-reference)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
+- [📂 Project Structure](#-project-structure)
 - [Environment Variables](#environment-variables)
 - [Available Scripts](#available-scripts)
 - [Roadmap](#roadmap)
@@ -154,29 +151,47 @@ Base URL: `https://trailnest-backend-alpha.vercel.app`
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
-```
-src/
-├── app/
-│   ├── (informational)/     # About, How It Works, Safety Tips, Sitemap, Contact
-│   ├── (support)/           # FAQs, Help, Privacy, Terms, Cookies
-│   ├── api/auth/             # BetterAuth route handler
-│   ├── explore/[id]/         # Listing details page
-│   ├── add-listing/          # Create listing (protected)
-│   ├── my-listings/          # Owner's listings dashboard (protected)
-│   ├── my-bookings/          # User's bookings (protected)
-│   ├── profile/               # Analytics dashboard (protected)
-│   ├── settings/              # Account settings (protected)
-│   ├── login/ · register/     # Auth screens
-│   └── forbidden/ · unauthorized/  # Access-control pages
-├── components/
-│   ├── Home/                 # Hero, Services, Testimonials, FAQ, Newsletter, CTA
-│   ├── Listing/               # Cards, both map components, Booking/Delete modals, forms
-│   ├── Shared/                # Navbar (+ mobile drawer, user dropdown), Footer
-│   └── Ui/                   # Button, Input, Container, ImageUpload, SectionTitle
-└── lib/                      # auth.ts, session helpers, API utilities
-```
+````text
+trailnest-client/
+├── public/                     # Static assets (icons, images, illustrations)
+└── src/
+    ├── app/                    # Next.js App Router folders & route handlers
+    │   ├── (informational)/    # Marketing & static views (About, Safety Tips, etc.)
+    │   ├── (support)/          # Help desk & legal pages (FAQs, Terms, Privacy)
+    │   ├── add-listing/        # Multi-step creation form for owners (Protected)
+    │   ├── api/                # API route configurations (e.g., BetterAuth handlers)
+    │   ├── explore/            # Dynamic campsite grid, maps, and details ([id])
+    │   ├── forbidden/          # 403 Access control error view
+    │   ├── login/              # User sign-in screen
+    │   ├── my-bookings/        # Traveler reservation itinerary panel (Protected)
+    │   ├── my-listings/        # Owner property management workspace (Protected)
+    │   ├── profile/            # Analytics dashboard and public overview (Protected)
+    │   ├── register/           # User sign-up screen
+    │   ├── settings/           # Security, account preferences panel (Protected)
+    │   ├── unauthorized/       # 401 Access control error view
+    │   ├── error.tsx           # Global error boundary fallbacks
+    │   ├── layout.tsx          # Main root layout layout configurations
+    │   ├── loading.tsx         # Root suspense fallback indicators
+    │   ├── not-found.tsx       # Custom 404 page layout
+    │   └── page.tsx            # Application core Landing page index entry point
+    ├── assets/                 # Component-specific styles or bundled image assets
+    ├── components/             # Reusable modular UI components
+    │   ├── Home/               # Hero sections, Feature grids, Testimonials, Newsletters
+    │   ├── Listing/            # Booking forms, Leaflet/Mapbox maps, management modals
+    │   ├── Shared/             # Responsive Navigation bar, drop-menus, Footers
+    │   └── Ui/                 # Atomic design tokens (Buttons, Inputs, Containers)
+    ├── hooks/                  # Custom state management and performance primitives
+    │   ├── useDebounce.ts      # Optimizes high-frequency state updates (search filters)
+    │   └── useImageUpload.ts   # Handles binary payload preparation & cloud staging
+    ├── lib/                    # SDK initializations & functional utilities
+    │   ├── core/               # Low-level network configurations & API base instances
+    │   ├── auth-client.ts      # BetterAuth Client-side reactive hook states
+    │   └── auth.ts             # BetterAuth Server-side runtime integrations
+    └── types/                  # Global TypeScript structural schema declarations
+        ├── explore.ts          # Typing definitions for query parameters and routing
+        └── listing.ts          # Schema models for campsites, reviews, and bookings
 
 ---
 
@@ -195,7 +210,7 @@ src/
 git clone https://github.com/shahadat-hossain99/trailnest-client.git
 cd trailnest-client
 npm install
-```
+````
 
 Copy the environment variables below into a `.env.local` file, then:
 
