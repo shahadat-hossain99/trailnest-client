@@ -1,7 +1,8 @@
 // components/Home/FeaturedCarousel.tsx
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
+import { motion, Variants } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ListingCard from "@/components/Listing/ListingCard";
 
@@ -33,6 +34,43 @@ interface FeaturedItem {
 interface FeaturedCarouselProps {
   listings: FeaturedItem[];
 }
+
+// Animation variants
+const containerVariants: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: "easeOut" as const,
+    },
+  },
+};
+
+const buttonVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut" as const,
+    },
+  },
+  hover: {
+    scale: 1.1,
+    transition: {
+      duration: 0.3,
+    },
+  },
+  tap: {
+    scale: 0.95,
+    transition: {
+      duration: 0.2,
+    },
+  },
+};
 
 const FeaturedCarousel = ({ listings }: FeaturedCarouselProps) => {
   const prevRef = useRef<HTMLButtonElement>(null);
@@ -138,24 +176,42 @@ const FeaturedCarousel = ({ listings }: FeaturedCarouselProps) => {
         }
       `}</style>
 
-      <div className="featured-swiper-wrapper">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-50px" }}
+        className="featured-swiper-wrapper"
+      >
         {/* Navigation Buttons */}
-        <div className="absolute right-0 z-10 flex items-center gap-2 -top-8">
-          <button
+        <motion.div
+          variants={buttonVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="absolute right-0 z-10 flex items-center gap-2 -top-8"
+        >
+          <motion.button
             ref={prevRef}
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
             className="custom-nav-button"
             aria-label="Previous slide"
           >
             <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             ref={nextRef}
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
             className="custom-nav-button"
             aria-label="Next slide"
           >
             <ChevronRight className="h-5 w-5" />
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         <Swiper
           className="featured-swiper"
@@ -200,7 +256,6 @@ const FeaturedCarousel = ({ listings }: FeaturedCarouselProps) => {
             paginationBulletMessage: "Go to slide {{index}}",
           }}
           onBeforeInit={(swiper) => {
-            // Initialize navigation with refs before Swiper init
             if (typeof swiper.params.navigation !== "boolean") {
               const navigation = swiper.params.navigation;
               if (navigation) {
@@ -211,22 +266,30 @@ const FeaturedCarousel = ({ listings }: FeaturedCarouselProps) => {
           }}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
-            // Update navigation after Swiper is initialized
             setTimeout(() => {
               swiper.navigation?.update();
             });
           }}
         >
-          {listings.map((listing) => (
+          {listings.map((listing, index) => (
             <SwiperSlide key={listing._id}>
-              <div className="featured-card-wrapper">
-                {/* Using your existing ListingCard component */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.6,
+                  delay: Math.min(index * 0.1, 0.5),
+                  ease: "easeOut" as const,
+                }}
+                viewport={{ once: true }}
+                className="featured-card-wrapper"
+              >
                 <ListingCard listing={listing} />
-              </div>
+              </motion.div>
             </SwiperSlide>
           ))}
         </Swiper>
-      </div>
+      </motion.div>
     </>
   );
 };

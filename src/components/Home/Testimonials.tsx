@@ -1,6 +1,7 @@
 // components/Home/Testimonials.tsx
 "use client";
 
+import { motion, Variants } from "framer-motion";
 import Image from "next/image";
 import Marquee from "react-fast-marquee";
 import { Star, Quote, Users, MapPin, Calendar } from "lucide-react";
@@ -77,6 +78,25 @@ const testimonials = [
 
 const testimonialsRow2 = [...testimonials].reverse();
 
+// Animation variants
+const headerVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6 },
+  },
+};
+
+const statVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: "easeOut" as const },
+  },
+};
+
 const StarRating = ({ rating }: { rating: number }) => {
   return (
     <div className="flex items-center gap-0.5">
@@ -102,14 +122,29 @@ const TestimonialCard = ({
   testimonial: (typeof testimonials)[0];
 }) => {
   return (
-    <div className="group relative mx-4 w-[340px] shrink-0 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-(--primary)/20 hover:shadow-xl">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      whileHover={{
+        y: -8,
+        transition: { duration: 0.3 },
+      }}
+      className="group relative mx-4 w-[340px] shrink-0 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-500 hover:border-(--primary)/20 hover:shadow-xl"
+    >
       {/* Background Glow */}
       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-(--primary)/5 to-(--secondary)/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
       {/* Quote Icon */}
-      <div className="absolute right-4 top-4 text-(--primary)/10 transition-opacity duration-500 group-hover:text-(--primary)/20">
+      <motion.div
+        initial={{ opacity: 0.1 }}
+        whileHover={{ opacity: 0.2 }}
+        transition={{ duration: 0.3 }}
+        className="absolute right-4 top-4 text-(--primary)"
+      >
         <Quote className="h-8 w-8" />
-      </div>
+      </motion.div>
 
       {/* Rating */}
       <div className="relative">
@@ -126,14 +161,18 @@ const TestimonialCard = ({
 
       {/* Reviewer Info */}
       <div className="relative flex items-center gap-3">
-        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full ring-2 ring-(--primary)/20">
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          transition={{ duration: 0.3 }}
+          className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full ring-2 ring-(--primary)/20"
+        >
           <Image
             src={testimonial.avatar}
             alt={testimonial.name}
             fill
             className="object-cover"
           />
-        </div>
+        </motion.div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-(--dark) truncate">
             {testimonial.name}
@@ -156,8 +195,13 @@ const TestimonialCard = ({
       </div>
 
       {/* Bottom Accent */}
-      <div className="absolute bottom-0 left-6 right-6 h-0.5 bg-gradient-to-r from-(--primary) to-(--secondary) scale-x-0 transition-transform duration-500 group-hover:scale-x-100" />
-    </div>
+      <motion.div
+        initial={{ scaleX: 0 }}
+        whileHover={{ scaleX: 1 }}
+        transition={{ duration: 0.5 }}
+        className="absolute bottom-0 left-6 right-6 h-0.5 bg-gradient-to-r from-(--primary) to-(--secondary) origin-left"
+      />
+    </motion.div>
   );
 };
 
@@ -166,52 +210,110 @@ const Testimonials = () => {
     <section className="relative overflow-hidden bg-gradient-to-b from-(--background) to-white py-16 sm:py-24">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute right-0 top-1/4 h-[500px] w-[500px] rounded-full bg-(--primary)/5 blur-3xl" />
-        <div className="absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-(--secondary)/5 blur-3xl" />
-        <div className="absolute left-1/2 top-0 h-[300px] w-[300px] -translate-x-1/2 rounded-full bg-(--primary)/5 blur-3xl" />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="absolute right-0 top-1/4 h-[500px] w-[500px] rounded-full bg-(--primary)/5 blur-3xl"
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.3 }}
+          className="absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-(--secondary)/5 blur-3xl"
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.6 }}
+          className="absolute left-1/2 top-0 h-[300px] w-[300px] -translate-x-1/2 rounded-full bg-(--primary)/5 blur-3xl"
+        />
       </div>
 
       <Container>
         {/* Header */}
-        <div className="relative mx-auto mb-14 max-w-3xl text-center">
+        <motion.div
+          variants={headerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="relative mx-auto mb-14 max-w-3xl text-center"
+        >
           <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="inline-block h-1 w-8 rounded-full bg-(--primary)" />
+            <motion.span
+              initial={{ width: 0 }}
+              whileInView={{ width: 32 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="inline-block h-1 rounded-full bg-(--primary)"
+            />
             <span className="text-xs font-semibold uppercase tracking-[3px] text-(--primary)">
               Testimonials
             </span>
-            <span className="inline-block h-1 w-8 rounded-full bg-(--primary)" />
+            <motion.span
+              initial={{ width: 0 }}
+              whileInView={{ width: 32 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="inline-block h-1 rounded-full bg-(--primary)"
+            />
           </div>
 
-          <h2 className="text-3xl font-bold text-(--dark) sm:text-4xl md:text-5xl">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="text-3xl font-bold text-(--dark) sm:text-4xl md:text-5xl"
+          >
             What Our{" "}
             <span className="bg-gradient-to-r from-(--primary) to-(--secondary) bg-clip-text text-transparent">
               Adventurers
             </span>{" "}
             Say
-          </h2>
+          </motion.h2>
 
-          <p className="mt-4 text-base text-(--text-secondary) sm:text-lg">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="mt-4 text-base text-(--text-secondary) sm:text-lg"
+          >
             Real stories from real explorers who found their perfect outdoor
             experiences with TrailNest.
-          </p>
+          </motion.p>
 
           {/* Stats */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-6">
-            <div className="flex items-center gap-2">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="mt-8 flex flex-wrap items-center justify-center gap-6"
+          >
+            <motion.div
+              variants={statVariants}
+              transition={{ delay: 0.3 }}
+              className="flex items-center gap-2"
+            >
               <Users className="h-5 w-5 text-(--primary)" />
               <span className="text-sm font-medium text-(--dark)">
                 10,000+ Happy Campers
               </span>
-            </div>
+            </motion.div>
             <div className="hidden h-6 w-px bg-gray-200 sm:block" />
-            <div className="flex items-center gap-2">
+            <motion.div
+              variants={statVariants}
+              transition={{ delay: 0.4 }}
+              className="flex items-center gap-2"
+            >
               <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
               <span className="text-sm font-medium text-(--dark)">
                 4.9/5 Average Rating
               </span>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </Container>
 
       {/* Marquee Rows */}
@@ -245,15 +347,30 @@ const Testimonials = () => {
 
       {/* Bottom CTA */}
       <Container>
-        <div className="relative mt-16 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          viewport={{ once: true }}
+          className="relative mt-16 text-center"
+        >
           <p className="text-sm text-(--text-secondary)">
             Join thousands of happy adventurers exploring the great outdoors
           </p>
           <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
-            <div className="flex -space-x-2">
-              {[1, 2, 3, 4].map((i) => (
-                <div
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              className="flex -space-x-2"
+            >
+              {[1, 2, 3, 4].map((i, index) => (
+                <motion.div
                   key={i}
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4, delay: 0.4 + index * 0.1 }}
+                  viewport={{ once: true }}
                   className="relative h-10 w-10 rounded-full ring-2 ring-white"
                 >
                   <Image
@@ -262,17 +379,29 @@ const Testimonials = () => {
                     fill
                     className="rounded-full object-cover"
                   />
-                </div>
+                </motion.div>
               ))}
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-(--primary) text-xs font-semibold text-white ring-2 ring-white">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, delay: 0.8 }}
+                viewport={{ once: true }}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-(--primary) text-xs font-semibold text-white ring-2 ring-white"
+              >
                 +5K
-              </div>
-            </div>
-            <span className="text-sm text-(--text-secondary)">
+              </motion.div>
+            </motion.div>
+            <motion.span
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              viewport={{ once: true }}
+              className="text-sm text-(--text-secondary)"
+            >
               joined in the last month
-            </span>
+            </motion.span>
           </div>
-        </div>
+        </motion.div>
       </Container>
     </section>
   );
