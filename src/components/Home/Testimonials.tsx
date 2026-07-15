@@ -131,10 +131,10 @@ const TestimonialCard = ({
         y: -8,
         transition: { duration: 0.3 },
       }}
-      className="group relative mx-4 w-[340px] shrink-0 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-500 hover:border-(--primary)/20 hover:shadow-xl"
+      className="group relative mx-4 w-85 shrink-0 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-500 hover:border-(--primary)/20 hover:shadow-xl"
     >
       {/* Background Glow */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-(--primary)/5 to-(--secondary)/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+      <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-(--primary)/5 to-(--secondary)/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
       {/* Quote Icon */}
       <motion.div
@@ -199,7 +199,7 @@ const TestimonialCard = ({
         initial={{ scaleX: 0 }}
         whileHover={{ scaleX: 1 }}
         transition={{ duration: 0.5 }}
-        className="absolute bottom-0 left-6 right-6 h-0.5 bg-gradient-to-r from-(--primary) to-(--secondary) origin-left"
+        className="absolute bottom-0 left-6 right-6 h-0.5 bg-linear-to-r from-(--primary) to-(--secondary) origin-left"
       />
     </motion.div>
   );

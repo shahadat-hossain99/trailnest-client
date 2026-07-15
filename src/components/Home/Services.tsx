@@ -65,7 +65,7 @@ const itemVariants: Variants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: "easeOut" as const, // Use 'as const' for literal type
+      ease: "easeOut" as const,
     },
   },
 };
@@ -74,7 +74,7 @@ const Services = () => {
   return (
     <section className="py-16 sm:py-24 bg-white overflow-hidden">
       <Container>
-        {/* Header */}
+        {/* Header - Now matching WhyChooseUs style */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -101,24 +101,26 @@ const Services = () => {
               className="inline-block h-1 rounded-full bg-(--primary)"
             />
           </div>
+
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             viewport={{ once: true }}
-            className="text-3xl font-bold text-(--dark) sm:text-4xl"
+            className="text-3xl font-bold tracking-tight text-(--dark) sm:text-4xl md:text-5xl"
           >
             What We{" "}
-            <span className="bg-gradient-to-r from-(--primary) to-(--secondary) bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-(--primary) to-(--secondary) bg-clip-text text-transparent">
               Offer
             </span>
           </motion.h2>
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
-            className="mt-4 text-(--text-secondary) max-w-2xl mx-auto"
+            className="mt-4 text-base text-(--text-secondary) sm:text-lg"
           >
             Everything you need for the perfect outdoor adventure
           </motion.p>
@@ -144,7 +146,7 @@ const Services = () => {
             >
               {/* Gradient Background on Hover */}
               <div
-                className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${service.color} opacity-0 transition-opacity duration-300 group-hover:opacity-5`}
+                className={`absolute inset-0 rounded-2xl bg-linear-to-br ${service.color} opacity-0 transition-opacity duration-300 group-hover:opacity-5`}
               />
 
               {/* Icon */}
@@ -169,7 +171,7 @@ const Services = () => {
                 initial={{ width: 0 }}
                 whileHover={{ width: "100%" }}
                 transition={{ duration: 0.4 }}
-                className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r ${service.color}`}
+                className={`absolute bottom-0 left-0 h-0.5 bg-linear-to-r ${service.color}`}
               />
             </motion.div>
           ))}

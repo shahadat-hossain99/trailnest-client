@@ -8,28 +8,26 @@ import {
   Shield,
   TreePine,
   Users,
-  Zap,
   Compass,
   Award,
   Clock,
   ArrowRight,
   Star,
-  Mountain,
   Tent,
   MapPin,
-  Heart,
+  Mountain,
 } from "lucide-react";
 import Container from "@/components/Ui/Container";
 import Button from "@/components/Ui/Button";
 
-// Animation variants
+// Animation variants (matching Services.tsx)
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.3,
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
     },
   },
 };
@@ -70,16 +68,19 @@ export default function AboutPage() {
       icon: TreePine,
       title: "Sustainability",
       desc: "Eco-friendly actions prioritizing the preservation of our shared spaces.",
+      color: "from-emerald-500 to-teal-500",
     },
     {
       icon: Users,
       title: "Community First",
       desc: "Building trusted, long-term relationships through open local networking.",
+      color: "from-blue-500 to-indigo-500",
     },
     {
       icon: Shield,
       title: "Absolute Trust",
       desc: "Verifying systems thoroughly so users interact with complete peace of mind.",
+      color: "from-purple-500 to-pink-500",
     },
   ];
 
@@ -140,9 +141,8 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-white overflow-hidden">
-      {/* Hero Section */}
+      {/* Hero Section - Matching Services.tsx styling */}
       <section className="relative py-20 sm:py-32 bg-gradient-to-br from-(--primary) to-(--dark) overflow-hidden">
-        {/* Decorative Elements */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-(--secondary) rounded-full blur-3xl" />
@@ -211,9 +211,49 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      {/* Stats Section */}
+      {/* Stats Section - Matching Services.tsx header style */}
       <section className="py-16 bg-(--background)">
         <Container>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <motion.span
+                initial={{ width: 0 }}
+                whileInView={{ width: 32 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="inline-block h-1 rounded-full bg-(--primary)"
+              />
+              <span className="text-xs font-semibold uppercase tracking-[3px] text-(--primary)">
+                Our Impact
+              </span>
+              <motion.span
+                initial={{ width: 0 }}
+                whileInView={{ width: 32 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="inline-block h-1 rounded-full bg-(--primary)"
+              />
+            </div>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="text-3xl sm:text-4xl font-bold text-(--dark)"
+            >
+              TrailNest by the{" "}
+              <span className="bg-gradient-to-r from-(--primary) to-(--secondary) bg-clip-text text-transparent">
+                Numbers
+              </span>
+            </motion.h2>
+          </motion.div>
+
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -225,20 +265,29 @@ export default function AboutPage() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="text-center"
+                whileHover={{
+                  y: -4,
+                  transition: { duration: 0.3 },
+                }}
+                className="group relative rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:border-(--primary)/20 hover:shadow-lg"
               >
-                <stat.icon className="h-8 w-8 text-(--primary) mx-auto mb-3" />
-                <p className="text-3xl font-bold text-(--dark)">
-                  {stat.number}
-                </p>
-                <p className="text-sm text-(--text-secondary)">{stat.label}</p>
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-(--primary)/5 to-(--secondary)/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="relative text-center">
+                  <stat.icon className="h-8 w-8 text-(--primary) mx-auto mb-3" />
+                  <p className="text-3xl font-bold text-(--dark)">
+                    {stat.number}
+                  </p>
+                  <p className="text-sm text-(--text-secondary)">
+                    {stat.label}
+                  </p>
+                </div>
               </motion.div>
             ))}
           </motion.div>
         </Container>
       </section>
 
-      {/* Who We Are */}
+      {/* Who We Are - Matching Services.tsx header style */}
       <section className="py-20 bg-white">
         <Container>
           <motion.div
@@ -249,16 +298,43 @@ export default function AboutPage() {
             className="max-w-3xl mx-auto text-center"
           >
             <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="inline-block h-1 w-8 rounded-full bg-(--primary)" />
+              <motion.span
+                initial={{ width: 0 }}
+                whileInView={{ width: 32 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="inline-block h-1 rounded-full bg-(--primary)"
+              />
               <span className="text-xs font-semibold uppercase tracking-[3px] text-(--primary)">
                 About Us
               </span>
-              <span className="inline-block h-1 w-8 rounded-full bg-(--primary)" />
+              <motion.span
+                initial={{ width: 0 }}
+                whileInView={{ width: 32 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="inline-block h-1 rounded-full bg-(--primary)"
+              />
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-(--dark)">
-              Who We Are
-            </h2>
-            <div className="mt-6 space-y-4 text-(--text-secondary) leading-relaxed">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="text-3xl sm:text-4xl font-bold text-(--dark)"
+            >
+              Who We{" "}
+              <span className="bg-gradient-to-r from-(--primary) to-(--secondary) bg-clip-text text-transparent">
+                Are
+              </span>
+            </motion.h2>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="mt-6 space-y-4 text-(--text-secondary) leading-relaxed"
+            >
               <p>
                 Founded by developers and green advocates, this platform
                 addresses the missing link between simple online resource
@@ -271,12 +347,12 @@ export default function AboutPage() {
                 campsites and gear while fostering a community of responsible
                 adventurers.
               </p>
-            </div>
+            </motion.div>
           </motion.div>
         </Container>
       </section>
 
-      {/* Core Values */}
+      {/* Core Values - Matching Services.tsx cards */}
       <section className="py-20 bg-(--background)">
         <Container>
           <motion.div
@@ -287,15 +363,36 @@ export default function AboutPage() {
             className="text-center mb-12"
           >
             <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="inline-block h-1 w-8 rounded-full bg-(--primary)" />
+              <motion.span
+                initial={{ width: 0 }}
+                whileInView={{ width: 32 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="inline-block h-1 rounded-full bg-(--primary)"
+              />
               <span className="text-xs font-semibold uppercase tracking-[3px] text-(--primary)">
                 Our Values
               </span>
-              <span className="inline-block h-1 w-8 rounded-full bg-(--primary)" />
+              <motion.span
+                initial={{ width: 0 }}
+                whileInView={{ width: 32 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="inline-block h-1 rounded-full bg-(--primary)"
+              />
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-(--dark)">
-              What We Stand For
-            </h2>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="text-3xl sm:text-4xl font-bold text-(--dark)"
+            >
+              What We{" "}
+              <span className="bg-gradient-to-r from-(--primary) to-(--secondary) bg-clip-text text-transparent">
+                Stand For
+              </span>
+            </motion.h2>
           </motion.div>
 
           <motion.div
@@ -310,20 +407,32 @@ export default function AboutPage() {
                 key={i}
                 variants={cardVariants}
                 whileHover="hover"
-                className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-shadow hover:shadow-lg"
+                className="group relative rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 hover:border-(--primary)/20 hover:shadow-lg"
               >
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-(--primary)/5 to-(--secondary)/5 opacity-0 transition-opacity group-hover:opacity-100" />
+                <div
+                  className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${v.color} opacity-0 transition-opacity duration-300 group-hover:opacity-5`}
+                />
                 <div className="relative">
-                  <div className="mb-4 inline-flex rounded-xl bg-(--primary)/10 p-3 text-(--primary) group-hover:bg-(--primary) group-hover:text-white transition">
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ duration: 0.3 }}
+                    className="mb-4 inline-flex rounded-xl bg-(--primary)/10 p-3 text-(--primary) group-hover:bg-(--primary) group-hover:text-white transition"
+                  >
                     <v.icon className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-bold text-(--dark) mb-2">
+                  </motion.div>
+                  <h3 className="text-xl font-bold text-(--dark) group-hover:text-(--primary) transition mb-2">
                     {v.title}
                   </h3>
                   <p className="text-(--text-secondary) leading-relaxed">
                     {v.desc}
                   </p>
                 </div>
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  transition={{ duration: 0.4 }}
+                  className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r ${v.color}`}
+                />
               </motion.div>
             ))}
           </motion.div>
@@ -341,15 +450,36 @@ export default function AboutPage() {
             className="text-center mb-12"
           >
             <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="inline-block h-1 w-8 rounded-full bg-(--primary)" />
+              <motion.span
+                initial={{ width: 0 }}
+                whileInView={{ width: 32 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="inline-block h-1 rounded-full bg-(--primary)"
+              />
               <span className="text-xs font-semibold uppercase tracking-[3px] text-(--primary)">
                 Journey
               </span>
-              <span className="inline-block h-1 w-8 rounded-full bg-(--primary)" />
+              <motion.span
+                initial={{ width: 0 }}
+                whileInView={{ width: 32 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="inline-block h-1 rounded-full bg-(--primary)"
+              />
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-(--dark)">
-              Our Milestones
-            </h2>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="text-3xl sm:text-4xl font-bold text-(--dark)"
+            >
+              Our{" "}
+              <span className="bg-gradient-to-r from-(--primary) to-(--secondary) bg-clip-text text-transparent">
+                Milestones
+              </span>
+            </motion.h2>
           </motion.div>
 
           <div className="max-w-3xl mx-auto">
@@ -360,13 +490,13 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="flex gap-6 py-6 border-b border-gray-100 last:border-b-0"
+                className="group flex gap-6 py-6 border-b border-gray-100 last:border-b-0 hover:border-(--primary)/20 transition-colors"
               >
-                <div className="flex-shrink-0 w-20 text-(--primary) font-bold text-2xl">
+                <div className="flex-shrink-0 w-20 text-(--primary) font-bold text-2xl group-hover:text-(--secondary) transition-colors">
                   {milestone.year}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-(--dark)">
+                  <h3 className="text-xl font-bold text-(--dark) group-hover:text-(--primary) transition-colors">
                     {milestone.title}
                   </h3>
                   <p className="text-(--text-secondary)">{milestone.desc}</p>
@@ -377,7 +507,7 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      {/* Team Section */}
+      {/* Team Section - Matching Services.tsx card style */}
       <section className="py-20 bg-(--background)">
         <Container>
           <motion.div
@@ -388,15 +518,36 @@ export default function AboutPage() {
             className="text-center mb-12"
           >
             <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="inline-block h-1 w-8 rounded-full bg-(--primary)" />
+              <motion.span
+                initial={{ width: 0 }}
+                whileInView={{ width: 32 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="inline-block h-1 rounded-full bg-(--primary)"
+              />
               <span className="text-xs font-semibold uppercase tracking-[3px] text-(--primary)">
                 Team
               </span>
-              <span className="inline-block h-1 w-8 rounded-full bg-(--primary)" />
+              <motion.span
+                initial={{ width: 0 }}
+                whileInView={{ width: 32 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="inline-block h-1 rounded-full bg-(--primary)"
+              />
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-(--dark)">
-              Meet the Team
-            </h2>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="text-3xl sm:text-4xl font-bold text-(--dark)"
+            >
+              Meet the{" "}
+              <span className="bg-gradient-to-r from-(--primary) to-(--secondary) bg-clip-text text-transparent">
+                Team
+              </span>
+            </motion.h2>
           </motion.div>
 
           <motion.div
@@ -410,18 +561,33 @@ export default function AboutPage() {
               <motion.div
                 key={index}
                 variants={itemVariants}
-                className="text-center"
+                whileHover={{
+                  y: -8,
+                  transition: { duration: 0.3 },
+                }}
+                className="group relative rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:border-(--primary)/20 hover:shadow-lg"
               >
-                <div className="relative mx-auto h-32 w-32 rounded-full overflow-hidden ring-4 ring-(--primary)/20">
-                  <Image
-                    src={member.avatar}
-                    alt={member.name}
-                    fill
-                    className="object-cover"
-                  />
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-(--primary)/5 to-(--secondary)/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="relative text-center">
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ duration: 0.3 }}
+                    className="relative mx-auto h-32 w-32 rounded-full overflow-hidden ring-4 ring-(--primary)/20 group-hover:ring-(--primary)/40 transition-all"
+                  >
+                    <Image
+                      src={member.avatar}
+                      alt={member.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </motion.div>
+                  <h3 className="mt-4 font-bold text-(--dark) group-hover:text-(--primary) transition-colors">
+                    {member.name}
+                  </h3>
+                  <p className="text-sm text-(--text-secondary)">
+                    {member.role}
+                  </p>
                 </div>
-                <h3 className="mt-4 font-bold text-(--dark)">{member.name}</h3>
-                <p className="text-sm text-(--text-secondary)">{member.role}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -440,7 +606,9 @@ export default function AboutPage() {
             className="relative z-10 max-w-3xl mx-auto text-center text-white"
           >
             <h2 className="text-3xl sm:text-4xl font-bold">
-              Ready to Start Your Adventure?
+              Ready to Start Your{" "}
+              <span className="text-(--secondary)">Adventure</span>
+              <span className="text-white">?</span>
             </h2>
             <p className="mt-4 text-lg text-white/80">
               Join thousands of adventurers who trust TrailNest for their
