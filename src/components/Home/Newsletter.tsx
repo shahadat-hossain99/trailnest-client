@@ -281,7 +281,7 @@ const Newsletter = () => {
             >
               <div className="relative flex-1 flex items-center min-w-0">
                 <div className="absolute left-4 pointer-events-none text-white/50">
-                  <Mail className="h-5 w-5" />
+                  <Mail className="h-5 w-5 text-[#2d6a4f]" />
                 </div>
                 <Input
                   type="email"
