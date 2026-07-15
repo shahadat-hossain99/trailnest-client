@@ -33,6 +33,10 @@ const Navbar = ({ user }: NavbarProps) => {
       name: "Explore",
       href: "/explore",
     },
+    {
+      name: "About",
+      href: "/about",
+    },
   ];
 
   const privateLinks = [

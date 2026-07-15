@@ -1,9 +1,10 @@
+// components/Navbar/UserDropdown.tsx
 "use client";
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation"; // ✅ Imported usePathname
+import { usePathname, useRouter } from "next/navigation";
 import {
   ChevronDown,
   User,
@@ -25,9 +26,8 @@ const UserDropdown = ({ user }: UserDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const pathname = usePathname(); // ✅ Get current pathname
+  const pathname = usePathname();
 
-  // ✅ Hooks are moved ABOVE the early return to comply with React rules
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -53,7 +53,6 @@ const UserDropdown = ({ user }: UserDropdownProps) => {
     return () => document.removeEventListener("keydown", handleEscape);
   }, []);
 
-  // Safeguard if user is unexpectedly null
   if (!user) return null;
 
   const handleLogout = async () => {
@@ -78,7 +77,7 @@ const UserDropdown = ({ user }: UserDropdownProps) => {
   ];
 
   return (
-    <div className="relative z-50" ref={dropdownRef}>
+    <div className="relative z-50 flex items-center gap-2" ref={dropdownRef}>
       {/* Dropdown Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
@@ -90,7 +89,7 @@ const UserDropdown = ({ user }: UserDropdownProps) => {
         }}
         aria-label="User menu"
         aria-expanded={isOpen}
-        className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-2 transition hover:bg-gray-200"
+        className="flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-2 transition hover:bg-emerald-50 hover:shadow-md hover:shadow-emerald-700/20"
       >
         <div className="relative h-8 w-8 overflow-hidden rounded-full bg-gray-200">
           <Image
@@ -111,9 +110,19 @@ const UserDropdown = ({ user }: UserDropdownProps) => {
         />
       </button>
 
+      {/* Logout Button - Outside Dropdown (always visible) */}
+      <button
+        onClick={handleLogout}
+        className="flex items-center gap-1.5 rounded-full border border-red-200 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 hover:border-red-300"
+        aria-label="Logout"
+      >
+        <LogOut className="h-4 w-4" />
+        <span className="hidden sm:inline">Logout</span>
+      </button>
+
       {/* Dropdown Menu */}
       <div
-        className={`absolute right-0 mt-2 w-56 rounded-xl bg-white shadow-lg ring-1 ring-black/5 transition-all duration-200 ${
+        className={`absolute right-0 top-full mt-2 w-56 rounded-xl bg-white shadow-lg ring-1 ring-black/5 transition-all duration-200 ${
           isOpen
             ? "opacity-100 scale-100 visible"
             : "opacity-0 scale-95 invisible"
@@ -131,7 +140,7 @@ const UserDropdown = ({ user }: UserDropdownProps) => {
         {/* Menu Items */}
         <div className="p-2">
           {menuItems.map((item) => {
-            const isActive = pathname === item.href; // ✅ Check if item matches path
+            const isActive = pathname === item.href;
 
             return (
               <Link
@@ -154,7 +163,7 @@ const UserDropdown = ({ user }: UserDropdownProps) => {
           })}
         </div>
 
-        {/* Logout Control Trigger */}
+        {/* Logout Button Inside Dropdown */}
         <div className="border-t p-2">
           <button
             onClick={handleLogout}

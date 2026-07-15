@@ -19,9 +19,9 @@ const features = [
     title: "Premium Campsites",
     description:
       "Browse hundreds of verified campsites across mountains, forests, lakes, and beaches.",
-    color: "from-emerald-500 to-teal-500",
+    // color: "from-[#2d6a4f] to-[#1a2e1a]",
     bgColor: "bg-emerald-50",
-    hoverColor: "group-hover:bg-emerald-500",
+    hoverColor: "group-hover:bg-[#2d6a4f]",
   },
   {
     icon: <ShieldCheck className="h-7 w-7" />,
@@ -30,7 +30,7 @@ const features = [
       "Book confidently with secure reservations and verified outdoor hosts.",
     color: "from-blue-500 to-indigo-500",
     bgColor: "bg-blue-50",
-    hoverColor: "group-hover:bg-blue-500",
+    hoverColor: "group-hover:bg-[#2d6a4f]",
   },
   {
     icon: <BadgeDollarSign className="h-7 w-7" />,
@@ -39,7 +39,7 @@ const features = [
       "Compare listings and choose the best campsite or outdoor gear within your budget.",
     color: "from-amber-500 to-orange-500",
     bgColor: "bg-amber-50",
-    hoverColor: "group-hover:bg-amber-500",
+    hoverColor: "group-hover:bg-[#2d6a4f]",
   },
   {
     icon: <MapPinned className="h-7 w-7" />,
@@ -48,7 +48,7 @@ const features = [
       "Find nearby campsites and hidden outdoor destinations with ease.",
     color: "from-purple-500 to-pink-500",
     bgColor: "bg-purple-50",
-    hoverColor: "group-hover:bg-purple-500",
+    hoverColor: "group-hover:bg-[#2d6a4f]",
   },
 ];
 

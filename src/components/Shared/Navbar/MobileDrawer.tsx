@@ -19,6 +19,7 @@ import {
 import Button from "@/components/Ui/Button";
 import { signOut } from "@/lib/auth-client"; // ✅ Imported BetterAuth client
 import type { UserSession } from "@/lib/core/session"; // ✅ Adjusted session type path
+import { BsInfoLg } from "react-icons/bs";
 
 interface MobileDrawerProps {
   isLoggedIn: boolean;
@@ -34,6 +35,7 @@ const MobileDrawer = ({ isLoggedIn, user }: MobileDrawerProps) => {
   const mainLinks = [
     { name: "Home", href: "/", icon: Home },
     { name: "Explore", href: "/explore", icon: Compass },
+    { name: "About", href: "/about", icon: BsInfoLg },
   ];
 
   // Action links for authenticated users
