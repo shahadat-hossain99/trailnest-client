@@ -233,7 +233,7 @@ const Footer = () => {
               >
                 Sitemap
               </Link>
-              <span className="flex items-center gap-1 text-sm text-white/40">
+              <span className="sm:flex items-center gap-1 text-sm text-white/40 hidden  ">
                 Made with{" "}
                 <Heart className="h-4 w-4 text-red-400 animate-pulse" /> by
                 TrailNest

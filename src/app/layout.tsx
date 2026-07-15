@@ -19,8 +19,91 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TrailNest",
-  description: "Outdoor Gear & Campsite Booking Platform",
+  metadataBase: new URL("https://trailnest-client.vercel.app"),
+
+  title: {
+    default: "TrailNest | Camping & Outdoor Adventure Booking",
+    template: "%s | TrailNest",
+  },
+
+  description:
+    "Discover, explore, and book the best campsites, cabins, RV parks, and outdoor adventures with TrailNest. Your perfect camping experience starts here.",
+
+  keywords: [
+    "TrailNest",
+    "camping",
+    "camping booking",
+    "campgrounds",
+    "campsites",
+    "outdoor adventure",
+    "RV park",
+    "cabins",
+    "nature travel",
+    "hiking",
+    "trekking",
+    "camping Bangladesh",
+    "travel booking",
+    "outdoor gear",
+    "eco tourism",
+  ],
+
+  authors: [
+    {
+      name: "Md. Shahadat Hossain",
+    },
+  ],
+
+  creator: "Md. Shahadat Hossain",
+
+  publisher: "TrailNest",
+
+  category: "Travel",
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
+  openGraph: {
+    title: "TrailNest | Camping & Outdoor Adventure Booking",
+
+    description:
+      "Find and book beautiful campsites, cabins, RV parks, and unforgettable outdoor experiences with TrailNest.",
+
+    url: "https://trailnest-client.vercel.app",
+
+    siteName: "TrailNest",
+
+    locale: "en_US",
+
+    type: "website",
+
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "TrailNest",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+
+    title: "TrailNest",
+
+    description:
+      "Book campsites, cabins, RV parks, and outdoor adventures effortlessly.",
+
+    images: ["/og-image.jpg"],
+  },
+
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default async function RootLayout({
